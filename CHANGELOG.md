@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## [Unreleased]
 
 - **Fix (Android TV): the home app row now follows Layout → App size.** The v2.x home row always showed 6 tiles; it now shows 4 / 5 / 6 / 7 (large / medium / small / compact), as the menu label says. Tiles stay 16:9, the app window gets lower with more per row, and the grokbot box stays just above it. ◀▶ still steps tile by tile and scrolls to apps past the edge. Test: `AppSizeTest.homeRowFollowsAppSize`.
+- **Fix (Android): ◀▶ in the top bar no longer gets stuck on the last workspace when some are hidden.** Hidden workspace slots are skipped, so with 4 workspaces ▶ from "4" now reaches the right-hand icons (Cinemarchy, Wi-Fi, Bluetooth, volume, inputs, screen). The 🚀 SpaceX TV link is now reachable with the D-pad too, between the workspaces and the icons, when the plugin is on. No wrap-around at the ends, as before. Test: `BarFocusTest`.
 
 ## [2.13.0-beta] — 2026-10-29 (pre-release, `versionCode 21`)
 
