@@ -111,6 +111,10 @@ One shared web app, two version numbers: the Samsung widget is numbered 2.13.6 s
 - **Grok Bot Companion (TV), experimental, tracks @tcballard's in-development branch:** a floating bot in a corner of the home screen. Android: long-press Menu, then OK. webOS/Tizen: the Blue key. Keyboard and (Android) voice input. With Tom Ballard's [Grok Bot Desktop Companion](https://github.com/tcballard/omarchy-plugin-grokbot-desktop) (MIT) on the PC, answers come from it through omarchy-link; otherwise from Ask (Android) or grok.com in the TV browser (webOS/Tizen).
 - Config keys: `cinemarchy.embedPlayer`, `cinemarchy.dhhLastSeen`, `plugins.companionOverlay`, `plugins.companionCorner` (`bottom-right`, `bottom-left`, `top-right`, `top-left`), `plugins.companionOffsetX/Y` (dp, max 240). PC side: `grokbotBridge`, `grokbotDesktopDir`, `grokbotTimeoutS`, and `OMARCHY_GROKBOT_DESKTOP_REF` (defaults to his branch; set `v0.1.0` once the tag exists).
 
+## Unreleased (launcher)
+
+- **Home row tiles:** choose how many tiles fit on the home row. `geometry.homeTiles` in `omarchytv.json` is **5, 6, 7 or 8** (default **6**, from `launcher/app/src/main/res/values/config.xml` `home_tiles`). Tiles stay 16:9 and shrink to fit; apps past the row still scroll. Set it from **Layout (Hyprland) → Home row** or workspace 5 → **Home row**. This does not change **App size** (`geometry.appSize`), which sizes the all-apps grid.
+
 ## What's New in `2.12.0-beta` (`versionCode 20`)
 
 1. **Native Grok Bot · Omarchy TUI (`AskActivity`) on the TV Home Shelf:**

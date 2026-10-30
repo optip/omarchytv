@@ -630,6 +630,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener, T
                 sysSet(j -> j.put("textTiles", n));
                 break;
             }
+            case "homeTiles": {
+                int n = LauncherConfig.nextHomeTiles(LauncherConfig.get(this).homeTiles);
+                sysSet(j -> geometry(j).put("homeTiles", n));
+                break;
+            }
             default:
                 break;
         }
@@ -2224,6 +2229,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener, T
         p.add(lSize, appSizeLabel(cfg.appSize), r -> {
             String n = next(LauncherConfig.APP_SIZES, cfg.appSize);
             applyLive("layout", lSize, j -> geometry(j).put("appSize", n));
+            return true;
+        });
+        String lHome = str(R.string.set_home_tiles);
+        p.add(lHome, getString(R.string.per_row, cfg.homeTiles), r -> {
+            int n = LauncherConfig.nextHomeTiles(cfg.homeTiles);
+            applyLive("layout", lHome, j -> geometry(j).put("homeTiles", n));
             return true;
         });
         p.add(lTile, steps(tiles, cfg.tileScale), r -> {

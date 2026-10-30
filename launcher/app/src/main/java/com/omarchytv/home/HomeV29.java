@@ -323,7 +323,8 @@ final class HomeV29 extends FrameLayout {
         row.setOverScrollMode(OVER_SCROLL_NEVER);
         row.setItemAnimator(null);
         row.setLayoutManager(new LinearLayoutManager(a, LinearLayoutManager.HORIZONTAL, false));
-        rowAdapter = new TileAdapter(true, 6, row);
+        int homeTiles = LauncherConfig.get(a).homeTiles;
+        rowAdapter = new TileAdapter(true, homeTiles, row);
         row.setAdapter(rowAdapter);
         LinearLayout.LayoutParams rl = new LinearLayout.LayoutParams(-1, -2);
         rl.topMargin = px(16);
@@ -351,7 +352,7 @@ final class HomeV29 extends FrameLayout {
         grokbotBox.setOnClickListener(v -> host.sys("grokbot-companion"));
         LayoutParams gbl = new LayoutParams(-2, -2, Gravity.END | Gravity.BOTTOM);
         gbl.rightMargin = px(36);
-        gbl.bottomMargin = px(296);
+        gbl.bottomMargin = px(companionBottomMargin(homeTiles));
         addView(grokbotBox, gbl);
 
         // ---- v2.10 workspaces 2-5: same v2.9 windows (square boxes, titles in the border) ----
@@ -600,6 +601,8 @@ final class HomeV29 extends FrameLayout {
         appName.setTextColor(t.accent);
         appHints.setTextColor(t.fg);
         updateRowHeader();
+        rowAdapter.setCols(c.homeTiles);
+        placeCompanion(c.homeTiles);
         rowAdapter.notifyDataSetChanged();
         gridAdapter.notifyDataSetChanged();
         refresh();
@@ -1145,6 +1148,7 @@ final class HomeV29 extends FrameLayout {
         sysRow(R.string.v210_ss_after, idle, "idle");
         sysRow(R.string.v210_logo_anim, cfg.logoAnim ? on : off, "logoAnim");
         sysRow(R.string.v210_text_tiles, cfg.textTiles ? on : off, "textTiles");
+        sysRow(R.string.set_home_tiles, act.getString(R.string.per_row, cfg.homeTiles), "homeTiles");
         sysRow(R.string.cinemarchy_hub, null, "cinemarchy");
         sysRow(R.string.grok_bot_hub, null, "grok-bot");
         sysRow(R.string.set_hidden, String.valueOf(cfg.hidden.size()), "hidden");
@@ -1478,8 +1482,8 @@ final class HomeV29 extends FrameLayout {
                 boolean r = k == KeyEvent.KEYCODE_DPAD_RIGHT;
                 if (z == 2) {
                     int pos = row.getChildAdapterPosition(row.findContainingItemView(f));
-                    int to = pos + (r ? 1 : -1);
-                    if (to >= 0 && to < rowAdapter.getItemCount()) focusApp(to);
+                    int to = homeRowStep(pos, rowAdapter.getItemCount(), r ? 1 : -1);
+                    if (to != pos) focusApp(to);
                     return true;
                 }
                 if (f == depBox) return true;
@@ -1636,18 +1640,71 @@ final class HomeV29 extends FrameLayout {
         if (tvFocused) appName.setText("TV");
     }
 
-    // ---- tiles: home row (TV + 5 apps, 16:9) and the 7-per-row grid of workspace 3 ----
+    // ---- tiles: home row (geometry.homeTiles across, 16:9) and the 7-per-row grid of workspace 3 ----
     // Focus (spec): 4 px accent border + 2 px dark outer outline + scale 1.05; unfocused: 2 px muted border.
+    // Home-row width is the 1920×1080 design: screen minus 32 px side margins, 28 px padding and the 2 px border.
+
+    /** Design width of the home row before the screen scale {@code s}. */
+    static final int HOME_ROW_INNER = 1920 - 64 - 56 - 4;
+    static final int HOME_ROW_GAP = 20;
+    /** Companion bottom margin at 6 tiles (px at 1080p). Other counts keep this same gap above the dock. */
+    static final int COMPANION_CLEAR_6 = 296;
+
+    /**
+     * One home-row tile so {@code cols} of them, plus the gaps between, fit in {@code innerPx}.
+     * Height is 16:9. App banners and web-app tiles share this box.
+     * @return {width, height}
+     */
+    static int[] homeTileSize(int cols, int innerPx, int gapPx) {
+        int n = Math.max(1, cols);
+        int w = Math.max(1, (innerPx - gapPx * (n - 1)) / n);
+        return new int[]{w, w * 9 / 16};
+    }
+
+    /** Design px from the screen bottom to the top of the home app window (1080p). */
+    static int homeWindowExtent(int cols) {
+        int tileH = homeTileSize(cols, HOME_ROW_INNER, HOME_ROW_GAP)[1];
+        return 32 + 20 + tileH + 16 + 30 + 22;   // bottom margin, pad, tile, row gap, header, pad
+    }
+
+    /** Companion bottom margin in design px. Six tiles stays {@link #COMPANION_CLEAR_6}. */
+    static int companionBottomMargin(int cols) {
+        int baseH = homeTileSize(6, HOME_ROW_INNER, HOME_ROW_GAP)[1];
+        int tileH = homeTileSize(cols, HOME_ROW_INNER, HOME_ROW_GAP)[1];
+        return COMPANION_CLEAR_6 - baseH + tileH;
+    }
+
+    /**
+     * Next home-row index for one Left/Right step. Either end of the list stays put, for any visible count.
+     * A step past the on-screen tiles is still a real index: {@link #focusIn} scrolls it into view.
+     */
+    static int homeRowStep(int pos, int count, int delta) {
+        int to = pos + delta;
+        return to >= 0 && to < count ? to : pos;
+    }
+
+    private void placeCompanion(int tiles) {
+        LayoutParams lp = (LayoutParams) grokbotBox.getLayoutParams();
+        int margin = px(companionBottomMargin(tiles));
+        if (lp.bottomMargin != margin) {
+            lp.bottomMargin = margin;
+            grokbotBox.setLayoutParams(lp);
+        }
+    }
 
     private final class TileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private final boolean tvFirst;
-        private final int cols;
+        private int cols;
         private final RecyclerView rv;
 
         TileAdapter(boolean tvFirst, int cols, RecyclerView rv) {
             this.tvFirst = tvFirst;
             this.cols = cols;
             this.rv = rv;
+        }
+
+        void setCols(int n) {
+            cols = n;
         }
 
         /** Home row with the TV tile shown ("tv.enabled": false hides it). */
@@ -1707,8 +1764,9 @@ final class HomeV29 extends FrameLayout {
             FrameLayout f = (FrameLayout) h.itemView;
             int inner = rv.getWidth() > 0 ? rv.getWidth() - rv.getPaddingLeft() - rv.getPaddingRight()
                     : Math.round(1920 * s) - px(64) - px(56) - px(4) - (tvFirst ? 0 : px(16));
-            int gap = px(20);
+            int gap = px(tvFirst ? HOME_ROW_GAP : 20);
             int w = (inner - gap * (cols - 1)) / cols;
+            if (tvFirst) w = homeTileSize(cols, inner, gap)[0];   // 16:9, shared by app and web tiles
             RecyclerView.LayoutParams lp = new RecyclerView.LayoutParams(tvFirst ? w : (inner / cols), w * 9 / 16);
             if (tvFirst) lp.rightMargin = pos == getItemCount() - 1 ? 0 : gap;
             else {

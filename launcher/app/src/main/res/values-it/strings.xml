@@ -246,6 +246,7 @@
     <!-- v2.8.1 Layout → App size -->
     <string name="size_compact">compatto</string>
     <string name="set_app_size">Dimensione app</string>
+    <string name="set_home_tiles">Riga home</string>
     <string name="per_row">%d per riga</string>
     <!-- v2.8.2 reboot check -->
     <string name="home_check_title">OmarchyTV non è la schermata Home</string>

@@ -259,6 +259,7 @@
     <!-- v2.8.1 Layout → App size -->
     <string name="size_compact">compact</string>
     <string name="set_app_size">App size</string>
+    <string name="set_home_tiles">Home row</string>
     <string name="per_row">%d per row</string>
     <!-- v2.8.2 reboot check -->
     <string name="home_check_title">OmarchyTV is not the home screen</string>

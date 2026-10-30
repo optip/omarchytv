@@ -39,8 +39,12 @@
     </string-array>
     <!-- Xiaomi / MediaTek sets: com.mediatek.wwtv.tvcenter -->
 
-    <!-- Tiles per row in the grid; the dock always has this many slots. -->
+    <!-- All-apps grid (Layout → App size, geometry "appSize"). Not the home row. -->
     <integer name="columns">7</integer>
+
+    <!-- Home row: how many 16:9 tiles fit on one screen (5–8). Extra apps scroll.
+         Overridden by omarchytv.json geometry.homeTiles. -->
+    <integer name="home_tiles">6</integer>
 
     <!-- Logo on the home screen and in the screensaver:
          "omarchy-tv" = Omarchy's pixel logo.txt plus a matching "TV" (default),

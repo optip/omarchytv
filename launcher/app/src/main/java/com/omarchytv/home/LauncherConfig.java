@@ -461,6 +461,13 @@ final class LauncherConfig {
     final String appSize;
     final int columns;
     static final String[] APP_SIZES = {"large", "medium", "small", "compact"};
+    /**
+     * Home row (geometry "homeTiles"): how many 16:9 tiles fit on one screen.
+     * {@link #HOME_TILES_MIN}–{@link #HOME_TILES_MAX}, default {@code R.integer.home_tiles} (6).
+     * Separate from {@link #columns} (Layout → App size), which does not change this row.
+     */
+    final int homeTiles;
+    static final int HOME_TILES_MIN = 5, HOME_TILES_MAX = 8;
     final int gapDp, borderDp;
     /** Settings → Layout → Transparency: 0-60 % for pane / menu / header backgrounds (see Surfaces). */
     final int transparency;
@@ -705,6 +712,9 @@ final class LauncherConfig {
         int idx = Arrays.asList(APP_SIZES).indexOf(size);
         appSize = idx >= 0 ? size : APP_SIZES[defCols - 4];
         columns = idx >= 0 ? idx + 4 : defCols;
+        int defHome = c != null ? c.getResources().getInteger(R.integer.home_tiles) : 6;
+        int rawHome = geo != null && geo.has("homeTiles") ? geo.optInt("homeTiles", defHome) : defHome;
+        homeTiles = homeTileCount(rawHome, defHome);
         gapDp = (int) clamp(geo != null ? geo.optInt("gaps", 5) : 5, 0, 20);   // Hyprland gaps_in = 5 (Omarchy looknfeel)
         borderDp = (int) clamp(geo != null ? geo.optInt("border", 2) : 2, 1, 4);
         transparency = (int) clamp(geo != null ? geo.optInt("transparency", Surfaces.DEFAULT) : Surfaces.DEFAULT, 5, 60);
@@ -860,6 +870,20 @@ final class LauncherConfig {
         if ("small".equals(size)) return 0.45f;
         if ("medium".equals(size)) return 0.56f;
         return 0.68f;
+    }
+
+    /**
+     * Tiles that fit on the home row. Outside {@link #HOME_TILES_MIN}–{@link #HOME_TILES_MAX}
+     * falls back to {@code fallback} when that is in range, otherwise 6 (the config.xml default).
+     */
+    static int homeTileCount(int raw, int fallback) {
+        int def = fallback >= HOME_TILES_MIN && fallback <= HOME_TILES_MAX ? fallback : 6;
+        return raw >= HOME_TILES_MIN && raw <= HOME_TILES_MAX ? raw : def;
+    }
+
+    /** Layout → Home row: OK steps 5 → 6 → 7 → 8 → 5. */
+    static int nextHomeTiles(int current) {
+        return current >= HOME_TILES_MIN && current < HOME_TILES_MAX ? current + 1 : HOME_TILES_MIN;
     }
 
     private static float clamp(float v, float lo, float hi) {

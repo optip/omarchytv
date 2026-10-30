@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- **Home row tile count.** How many tiles fit on the home row is now a setting, 5–8, default 6 (nothing changes until you set it). Tiles stay 16:9 and shrink to fit a 1920×1080 row; further apps still scroll. Key: `geometry.homeTiles` in `omarchytv.json` (default `R.integer.home_tiles` in `launcher/app/src/main/res/values/config.xml`). On the TV: Settings → Layout (Hyprland) → Home row, or workspace 5 → Home row. Layout → App size (`geometry.appSize`) still only sizes the all-apps grid.
+
 ## [2.13.0-beta] — 2026-10-29 (pre-release, `versionCode 21`)
 
 Artifacts: `omarchytv-release-2.13.0-beta.apk` (Android TV), `omarchytv-webos-2.13.0-testing.ipk` (LG webOS), `OmarchyTV-tizen-2.13.0-beta-unsigned.wgt` (Samsung Tizen, unsigned testing), `omarchytv-mobile-2.13.0-beta.apk` (phone), `omarchy-tv-pc-plugin-2.13.0-beta.tar.gz` plus separate `omarchy-tv` and `omarchy-link` tarballs, and `SHA256SUMS`.

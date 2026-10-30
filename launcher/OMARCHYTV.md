@@ -29,7 +29,7 @@ bar_*, workspace_*), `res/layout/*`, and the self-contained views `WallpaperView
 ## Configuration
 
 Build-time defaults: `app/src/main/res/values/config.xml` (dock, hidden apps, Live TV package =
-`com.sony.dtv.tvx`, columns, `wallpaper`, `omarchy_icon`, `logo`, `screensaver_clock`).
+`com.sony.dtv.tvx`, columns, `home_tiles`, `wallpaper`, `omarchy_icon`, `logo`, `screensaver_clock`).
 
 Run-time override (no rebuild): push a JSON file, the home screen reloads it on the next Home press:
 
@@ -154,7 +154,7 @@ decoded at exactly 1920x1080 (power-of-two subsample), and on a native-4K UI sur
   "version": 1,
   "language": "auto",
   "uiSize": "medium",
-  "geometry": { "fontScale": 1.0, "tileScale": 1.0, "gaps": 8, "border": 2 },
+  "geometry": { "fontScale": 1.0, "tileScale": 1.0, "gaps": 8, "border": 2, "homeTiles": 6 },
   "panes": ["clock", "sysinfo", "weather"],
   "weather": { "lat": 45.46, "lon": 9.19, "place": "Milano" },
   "wallpaper": "omarchy-liftoff",
@@ -164,6 +164,8 @@ decoded at exactly 1920x1080 (power-of-two subsample), and on a native-4K UI sur
 }
 ```
 `wallpaper`: `omarchy-liftoff`, `omarchy-road` (both from Omarchy's Tokyo Night theme, see NOTICE), `procedural`, or an absolute image path.
+
+`geometry.homeTiles`: how many 16:9 tiles fit on the home row at once (5, 6, 7 or 8). Default 6 (`R.integer.home_tiles` in `config.xml`) when the key is missing or outside that range, so an existing file looks the same. The tiles shrink to fit a 1920×1080 row and keep their aspect; apps beyond the row scroll. Layout → App size (`geometry.appSize` / `columns`) does not change this row. On the TV: Layout (Hyprland) → Home row, or workspace 5 → Home row.
 
 ### Connect Omarchy Linux (Omarchy Link pairing screen)
 Logo menu → *Connect Omarchy Linux* (it: *Collega Omarchy Linux*, de: *Omarchy Linux verbinden*): TV address (`ip:47800`),

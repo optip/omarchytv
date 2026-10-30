@@ -246,6 +246,7 @@
     <!-- v2.8.1 Layout → App size -->
     <string name="size_compact">kompakt</string>
     <string name="set_app_size">App-Größe</string>
+    <string name="set_home_tiles">Home-Reihe</string>
     <string name="per_row">%d pro Reihe</string>
     <!-- v2.8.2 reboot check -->
     <string name="home_check_title">OmarchyTV ist nicht der Startbildschirm</string>
