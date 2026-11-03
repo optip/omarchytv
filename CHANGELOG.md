@@ -210,6 +210,10 @@ A dependency update, not a behaviour change: the TV side works exactly as before
 - **`omarchy-link` runs as a service.** `session --daemon` ignores stdin EOF and keeps the session up until SIGTERM, which is what systemd and `/dev/null` stdin need; without the flag nothing changes, because the bar widget's session must still end when its stdin closes. A user unit to copy is in `pc-plugin/omarchy-link/README.md`, with a test of its own ([#79](https://github.com/piermark/omarchytv/issues/79)).
 - **The Waybar widget no longer runs over its neighbour.** The widget reported the width of the button it fills, which is an icon slot of 27 px whatever the label says, so with the app name on the text was painted past its own box and into the next widget. It now measures the label it draws, with the same font and size, and reports that width plus its margins; a vertical bar keeps the glyph alone. Checked with `qmllint` only: Waybar does not run on this machine, so the geometry is not yet verified on screen ([#81](https://github.com/piermark/omarchytv/issues/81)).
 
+### Android TV (next build)
+
+- **Fix: voice in the companion chat and in Ask.** "🎤 Speak" and the remote's mic key now listen with the in-app SpeechRecognizer, as Grok Bot Direct does. On a SHIELD (Android 11), Google's recognizer activity did not record ("without RECORD_AUDIO permissions"). OmarchyTV asks for the microphone permission at first use. While it listens, the mic button shows "🎤 Listening…" (and the words it hears) in cyan. Push the button again to stop. The old recognizer intent is still the fallback.
+
 ### LG webOS / Samsung Tizen 2.13.11 (draft, not released)
 
 LG and Samsung only. Android TV is unchanged in this build: Android users stay on the current Android release (2.13.8); Android work resumes separately.
