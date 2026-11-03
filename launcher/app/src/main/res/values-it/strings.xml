@@ -330,6 +330,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ sposta · OK salva · Indietro annulla</string>
     <string name="v210_arrange_reset">Ripristina posizioni</string>
     <string name="ss_speed">Velocità effetto</string>
+    <string name="ss_web">Pagina web</string>
+    <string name="ss_shift">Spostamento pixel</string>
     <string name="speed_slow">lenta</string>
     <string name="speed_normal">normale</string>
     <string name="speed_fast">veloce</string>

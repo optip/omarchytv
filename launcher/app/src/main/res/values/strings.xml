@@ -343,6 +343,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ move · OK save · Back cancel</string>
     <string name="v210_arrange_reset">Reset positions</string>
     <string name="ss_speed">Effect speed</string>
+    <string name="ss_web">Web page</string>
+    <string name="ss_shift">Pixel shift</string>
     <string name="speed_slow">slow</string>
     <string name="speed_normal">normal</string>
     <string name="speed_fast">fast</string>

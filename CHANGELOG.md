@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Android TV (next build)
+
+- **Web page screensaver.** `"screensaver": {"mode": "web", "webapp": "<id>"}` shows the page of that web app as the screensaver. `"url"` sets a page directly. The idle screensaver and the system screensaver both use it. The URL rule is the rule of the web apps: `https://`, or `http://` only to a literal LAN address. The normal screensaver shows until the page is loaded. It stays if the page fails or does not load in 10 s. A pixel shift moves the page every 60 s (`"shift": false` stops it). Settings → Screensaver → "Web page" selects the web app.
+
 ### LG webOS / Samsung Tizen 2.13.11 (draft, not released)
 
 LG and Samsung only. Android TV is unchanged in this build: Android users stay on the current Android release (2.13.8); Android work resumes separately.
