@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Android TV (next build)
+
+- **Fix: voice in the companion chat and in Ask.** "🎤 Speak" and the remote's mic key now listen with the in-app SpeechRecognizer, as Grok Bot Direct does. On a SHIELD (Android 11), Google's recognizer activity did not record ("without RECORD_AUDIO permissions"). OmarchyTV asks for the microphone permission at first use. While it listens, the mic button shows "🎤 Listening…" (and the words it hears) in cyan. Push the button again to stop. The old recognizer intent is still the fallback.
+
 ### LG webOS / Samsung Tizen 2.13.11 (draft, not released)
 
 LG and Samsung only. Android TV is unchanged in this build: Android users stay on the current Android release (2.13.8); Android work resumes separately.

@@ -241,6 +241,8 @@ otherwise OK opens Live TV (Android has no public "tune to number" intent).
   that key opens the companion (or Walker, with `"voiceKey": "launcher"`) from anywhere: `adb shell cmd role add-role-holder android.app.role.ASSISTANT com.omarchytv.home`.
   Speech recognition stays with Google. Undo: `adb shell cmd role add-role-holder android.app.role.ASSISTANT com.google.android.katniss`
   (or Settings → Apps → Default apps → Assist app).
+  v2.14: the companion chat and `> ask` listen with the in-app SpeechRecognizer (`RECORD_AUDIO`, asked at first use).
+  While it listens, the mic button shows "🎤 Listening…" in cyan. The system recognizer activity is the fallback.
 - **Remote buttons** (Launcher settings → Remote buttons, shown only while a remote listed in `assets/remotes.json` is
   connected; or `"keys"` in the config): bind a remote key to an app,
   an intent or an OmarchyTV action, separately for a single, double, triple and long press. Example (the SHIELD

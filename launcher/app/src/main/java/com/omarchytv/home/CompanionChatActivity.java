@@ -31,8 +31,8 @@ import java.util.UUID;
 
 /**
  * v2.13 Grok Bot Companion (TV) session: a chat panel opened from the floating companion (the Blue key, OK on
- * it after long-press Menu, or the home tile). Type with the on-screen or a Bluetooth/USB keyboard, or speak through
- * the system recognizer (the remote's mic on Android TV). With @tcballard's Grok Bot Desktop Companion on
+ * it after long-press Menu, or the home tile). Type with the on-screen or a Bluetooth/USB keyboard, or speak
+ * (v2.14: the in-app SpeechRecognizer through {@link VoiceInput}; the system recognizer activity is the fallback). With @tcballard's Grok Bot Desktop Companion on
  * a linked PC (omarchy-link) the question goes to it; otherwise to OmarchyTV's own Ask (the AI provider
  * chosen there: Grok Bot, Claude Code, Codex, Hermes…). "open Netflix" / "apri YouTube" opens an installed app
  * first (CompanionCommands). Links in a reply become buttons: YouTube ones play in the YouTube app, others open
@@ -192,7 +192,51 @@ public class CompanionChatActivity extends Activity implements OmarchyLink.Liste
         }
     }
 
+    // ---- voice: v2.14 in-app SpeechRecognizer (VoiceInput). The recognizer intent is only the fallback. ----
+
+    private VoiceInput voiceIn;
+    private boolean hearing;
+
+    /** Starts to listen; OK on the mic while it listens stops it. */
     private void voice() {
+        if (voiceIn == null) voiceIn = new VoiceInput(this, new VoiceInput.Listener() {
+            @Override public void onListening(String partial) {
+                if (!hearing) mark.pose("alert");
+                hearing = true;
+                mic.setText(partial.isEmpty() ? "🎤 Listening…" : "🎤 " + VoiceInput.clip(partial, 24));
+                style(mic, mic.isFocused());
+            }
+
+            @Override public void onIdle() {
+                hearing = false;
+                mic.setText("🎤 Speak");
+                style(mic, mic.isFocused());
+                mark.pose("idle");
+            }
+
+            @Override public void onText(String text) {
+                send(text);
+            }
+
+            @Override public void onFail(String message) {
+                line("OmarchyTV", message, false, false);
+            }
+
+            @Override public void onFallback() {
+                voiceIntent();
+            }
+        });
+        voiceIn.toggle();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(req, perms, res);
+        if (voiceIn != null) voiceIn.onPermissionResult(req, res);
+    }
+
+    /** Fallback: the system recognizer activity. */
+    private void voiceIntent() {
         Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE, MainActivity.speechLanguage(this))
@@ -210,7 +254,8 @@ public class CompanionChatActivity extends Activity implements OmarchyLink.Liste
         super.onActivityResult(req, res, data);
         if (req != REQ_VOICE || res != RESULT_OK || data == null) return;
         List<String> r = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-        if (r != null && !r.isEmpty()) send(r.get(0));
+        String q = r != null && !r.isEmpty() ? r.get(0) : data.getStringExtra("query");   // some recognizers only set "query"
+        if (q != null && !q.trim().isEmpty()) send(q);
     }
 
     @Override
@@ -251,6 +296,7 @@ public class CompanionChatActivity extends Activity implements OmarchyLink.Liste
     @Override
     protected void onPause() {
         visible = false;
+        if (voiceIn != null) voiceIn.cancel();
         OmarchyLink.removeListener(this);
         super.onPause();
     }
@@ -420,6 +466,13 @@ public class CompanionChatActivity extends Activity implements OmarchyLink.Liste
 
     private void style(TextView v, boolean f) {
         GradientDrawable g = new GradientDrawable();
+        if (hearing && v == mic) {   // listening: cyan, focused or not
+            g.setColor(Theme.withAlpha(t.cyan, f ? 0.45f : 0.30f));
+            g.setStroke(dp(2), t.cyan);
+            v.setBackground(g);
+            v.setTextColor(t.fgBright);
+            return;
+        }
         g.setColor(f ? t.selection : Theme.withAlpha(t.bgDarker, 0.8f));
         g.setStroke(dp(f ? 2 : 1), f ? t.activeBorder : t.inactiveBorder);
         v.setBackground(g);

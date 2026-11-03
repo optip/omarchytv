@@ -82,6 +82,8 @@ public class AskActivity extends Activity implements OmarchyLink.Listener {
     private ScrollView scroll;
     private final List<TextView> bracketButtons = new ArrayList<>();
     private AsciiMenu popupMenu;
+    private TextView btnVoice;
+    private VoiceInput voiceIn;
 
     private String pendingId, session;
     private final StringBuilder queue = new StringBuilder();
@@ -147,7 +149,7 @@ public class AskActivity extends Activity implements OmarchyLink.Listener {
         leftStatus.addView(statusBadge, sbl);
         topBar.addView(leftStatus, new LinearLayout.LayoutParams(0, -2, 1f));
 
-        TextView btnVoice = bracketBtn(isIt() ? "🎤 voce" : "🎤 voice", this::listen);
+        btnVoice = bracketBtn(isIt() ? "🎤 voce" : "🎤 voice", this::listen);
         TextView btnThemes = bracketBtn(isIt() ? "🎨 temi ▾" : "🎨 themes ▾", () -> showThemesPopup(win));
         TextView btnWeb = bracketBtn("🌐 web ▾", () -> showWebPopup(win));
         TextView btnClose = bracketBtn("✕", this::finish);
@@ -313,12 +315,18 @@ public class AskActivity extends Activity implements OmarchyLink.Listener {
         b.setBackground(new BracketBg());
         b.setOnClickListener(v -> action.run());
         b.setOnFocusChangeListener((v, has) -> {
-            Theme t = Theme.cur();
-            b.setTextColor(has ? t.accent : t.fgBright);
+            b.setTextColor(btnColor(b, has));
             v.invalidate();
         });
         bracketButtons.add(b);
         return b;
+    }
+
+    /** Cyan on the voice button while it listens. */
+    private int btnColor(TextView b, boolean focused) {
+        Theme t = Theme.cur();
+        if (b == btnVoice && voiceIn != null && voiceIn.listening()) return t.cyan;
+        return focused ? t.accent : t.fgBright;
     }
 
     private final class BracketBg extends android.graphics.drawable.Drawable {
@@ -396,7 +404,7 @@ public class AskActivity extends Activity implements OmarchyLink.Listener {
                 + ip + ":47800/mcp");
 
         for (TextView b : bracketButtons) {
-            b.setTextColor(b.isFocused() ? t.accent : t.fgBright);
+            b.setTextColor(btnColor(b, b.isFocused()));
             b.invalidate();
         }
         if (wallpaperView != null) {
@@ -961,7 +969,49 @@ public class AskActivity extends Activity implements OmarchyLink.Listener {
         scroll.post(() -> scroll.fullScroll(View.FOCUS_DOWN));
     }
 
+    /** v2.14: the in-app SpeechRecognizer (VoiceInput); the recognizer intent is the fallback. Again while it listens: stop. */
     private void listen() {
+        if (voiceIn == null) voiceIn = new VoiceInput(this, new VoiceInput.Listener() {
+            @Override public void onListening(String partial) {
+                String w = isIt() ? "🎤 ascolto…" : "🎤 listening…";
+                btnVoice.setText("[ " + (partial.isEmpty() ? w : "🎤 " + VoiceInput.clip(partial, 24)) + " ]");
+                btnVoice.setTextColor(btnColor(btnVoice, btnVoice.isFocused()));
+            }
+
+            @Override public void onIdle() {
+                btnVoice.setText("[ " + (isIt() ? "🎤 voce" : "🎤 voice") + " ]");
+                btnVoice.setTextColor(btnColor(btnVoice, btnVoice.isFocused()));
+            }
+
+            @Override public void onText(String text) {
+                runCommand(text);
+            }
+
+            @Override public void onFail(String message) {
+                line("sys", message, Theme.cur().yellow);
+            }
+
+            @Override public void onFallback() {
+                listenIntent();
+            }
+        });
+        voiceIn.toggle();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] res) {
+        super.onRequestPermissionsResult(req, perms, res);
+        if (voiceIn != null) voiceIn.onPermissionResult(req, res);
+    }
+
+    @Override
+    protected void onPause() {
+        if (voiceIn != null) voiceIn.cancel();
+        super.onPause();
+    }
+
+    /** Fallback: the system recognizer activity; without one, the keyboard. */
+    private void listenIntent() {
         Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE, MainActivity.speechLanguage(this))
@@ -980,7 +1030,8 @@ public class AskActivity extends Activity implements OmarchyLink.Listener {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode != REQ_SPEECH || resultCode != RESULT_OK || data == null) return;
         List<String> r = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-        if (r != null && !r.isEmpty()) runCommand(r.get(0));
+        String q = r != null && !r.isEmpty() ? r.get(0) : data.getStringExtra("query");   // some recognizers only set "query"
+        if (q != null && !q.trim().isEmpty()) runCommand(q.trim());
     }
 
     @Override
