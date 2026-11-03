@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ 移動 · OK 保存 · 戻る キャンセル</string>
     <string name="v210_arrange_reset">位置をリセット</string>
     <string name="ss_speed">エフェクトの速さ</string>
+    <string name="ss_web">ウェブページ</string>
+    <string name="ss_shift">ピクセルシフト</string>
     <string name="speed_slow">遅い</string>
     <string name="speed_normal">標準</string>
     <string name="speed_fast">速い</string>

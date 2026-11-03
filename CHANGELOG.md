@@ -210,6 +210,10 @@ A dependency update, not a behaviour change: the TV side works exactly as before
 - **`omarchy-link` runs as a service.** `session --daemon` ignores stdin EOF and keeps the session up until SIGTERM, which is what systemd and `/dev/null` stdin need; without the flag nothing changes, because the bar widget's session must still end when its stdin closes. A user unit to copy is in `pc-plugin/omarchy-link/README.md`, with a test of its own ([#79](https://github.com/piermark/omarchytv/issues/79)).
 - **The Waybar widget no longer runs over its neighbour.** The widget reported the width of the button it fills, which is an icon slot of 27 px whatever the label says, so with the app name on the text was painted past its own box and into the next widget. It now measures the label it draws, with the same font and size, and reports that width plus its margins; a vertical bar keeps the glyph alone. Checked with `qmllint` only: Waybar does not run on this machine, so the geometry is not yet verified on screen ([#81](https://github.com/piermark/omarchytv/issues/81)).
 
+### Android TV (next build)
+
+- **Web page screensaver.** `"screensaver": {"mode": "web", "webapp": "<id>"}` shows the page of that web app as the screensaver. `"url"` sets a page directly. The idle screensaver and the system screensaver both use it. The URL rule is the rule of the web apps: `https://`, or `http://` only to a literal LAN address. The normal screensaver shows until the page is loaded. It stays if the page fails or does not load in 10 s. A pixel shift moves the page every 60 s (`"shift": false` stops it). Settings → Screensaver → "Web page" selects the web app.
+
 ### LG webOS / Samsung Tizen 2.13.11 (draft, not released)
 
 LG and Samsung only. Android TV is unchanged in this build: Android users stay on the current Android release (2.13.8); Android work resumes separately.

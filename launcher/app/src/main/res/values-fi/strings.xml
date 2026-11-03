@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ siirrä · OK tallenna · Takaisin peru</string>
     <string name="v210_arrange_reset">Palauta sijainnit</string>
     <string name="ss_speed">Tehosteen nopeus</string>
+    <string name="ss_web">Verkkosivu</string>
+    <string name="ss_shift">Pikselisiirto</string>
     <string name="speed_slow">hidas</string>
     <string name="speed_normal">normaali</string>
     <string name="speed_fast">nopea</string>

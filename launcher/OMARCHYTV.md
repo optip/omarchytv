@@ -210,6 +210,36 @@ Logo (`logo` in config / JSON, used by home and screensaver): `omarchy-tv` (defa
   The launcher reads the file, gets the OAuth2 token itself and adds it to OpenSky requests; the saver page is only
   told that there is one. After "Reset credential" on OpenSky, push the new file. Delete it to go back to anonymous.
 
+### Web page screensaver (v2.14, Android TV)
+
+Mode `web` shows a web page as the screensaver, for example an energy dashboard on your LAN. It works in
+the idle screensaver and in the system screensaver (`OmarchyDream`).
+
+```json
+"screensaver": { "mode": "web", "webapp": "energy" }
+"screensaver": { "mode": "web", "url": "http://10.5.10.56:8080/x.html" }
+"screensaver": { "mode": "web", "webapp": "energy", "shift": false }
+```
+
+- `webapp`: the `id` of an entry in `webapps`. The screensaver uses the `url` and the `ua` of that entry.
+  The id is compared in the same form as the `webapps` ids (lower case, other characters become `-`).
+- `url`: a direct URL. The screensaver uses it when `webapp` is not set or does not exist.
+- `shift`: anti burn-in pixel shift, default `true`. Every 60 s the page moves to the next of 8 positions
+  on a small circle (at most 6 dp from the centre).
+- The URL rule is the rule of the remote panes and the web apps. `https://` is allowed. `http://` is
+  allowed only to a literal private or link-local address (10/8, 172.16/12, 192.168/16, fc00::/7,
+  link-local). Host names and public addresses are not allowed for `http://`.
+- The page can load files and send requests (XHR, fetch, EventSource) to its own server. The screensaver
+  does not open new windows. It does not go to a page on a different origin. It does not show dialogs.
+- The page fills the screen. The WebView uses the page's viewport tag, so a page with
+  `<meta name=viewport content="width=1920">` fits a 1080p or a 4K screen.
+- The normal screensaver (the `art`) shows until the page is loaded. If the URL is missing or not
+  allowed, if the page gives an error (HTTP 400 or more), or if the page does not load in 10 s, the
+  normal screensaver stays. The log (tag `OmarchyTV`) gives the reason.
+- Any key closes the screensaver, as before. The page does not get the keys.
+- Settings → Screensaver → "Web page" selects a web app: off → each web app → off. "Off" sets the mode
+  back to `aquarium` or `logo` from the `art`. "Pixel shift" shows only in mode `web`.
+
 ## Resolution
 
 Layouts are in dp/sp, icons are vector drawables, the wordmark and screensaver are drawn as

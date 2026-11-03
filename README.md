@@ -461,6 +461,8 @@ In the Themes list (and in the Wallpaper list) you find **Random theme** and **R
 #### Aquarium vs Aquarium Classic
 Both are in the screensaver picker. **Omarchy Aquarium (homage)** (`saverArt = "aquarium"`) is the new default: my five-part homage to Future Crew's *Second Reality* with a 4-channel tracker tune (`M` mutes it). **Aquarium Classic** (`saverArt = "aquarium-classic"`) is the previous Cyber-TUI aquarium with its ST3 tune.
 
+Android TV can also show a web page as the screensaver, for example a dashboard on your LAN (`"screensaver": {"mode": "web", "webapp": "<id>"}`). Refer to [launcher/OMARCHYTV.md](launcher/OMARCHYTV.md#web-page-screensaver-v214-android-tv).
+
 #### WireGuard on Android TV
 ```bash
 omarchy-tv wg push wg0.conf --tv 192.168.1.9:5555   # copies the .conf to /sdcard/Download on the TV

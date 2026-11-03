@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ mută · OK salvează · Înapoi anulează</string>
     <string name="v210_arrange_reset">Resetează pozițiile</string>
     <string name="ss_speed">Viteza efectului</string>
+    <string name="ss_web">Pagină web</string>
+    <string name="ss_shift">Deplasare pixeli</string>
     <string name="speed_slow">lentă</string>
     <string name="speed_normal">normală</string>
     <string name="speed_fast">rapidă</string>

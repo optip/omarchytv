@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ перемістити · OK зберегти · Назад скасувати</string>
     <string name="v210_arrange_reset">Скинути положення</string>
     <string name="ss_speed">Швидкість ефекту</string>
+    <string name="ss_web">Вебсторінка</string>
+    <string name="ss_shift">Зсув пікселів</string>
     <string name="speed_slow">повільно</string>
     <string name="speed_normal">звичайно</string>
     <string name="speed_fast">швидко</string>

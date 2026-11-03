@@ -238,17 +238,20 @@ public class WebAppActivity extends Activity {
 
     /** Desktop UA: Chrome on Linux (like Omarchy's Chromium web apps); mobile: the WebView default. */
     private void applyUa() {
-        WebSettings s = web.getSettings();
+        web.getSettings().setUserAgentString(userAgent(ua, mobileUa));
+    }
+
+    /** v2.14: the UA for a web app's "ua" value, from the WebView's default UA (also used by the web screensaver). */
+    static String userAgent(String ua, String webViewUa) {
         if ("desktop".equals(ua)) {
             String chrome = "120.0.0.0";
-            java.util.regex.Matcher m = java.util.regex.Pattern.compile("Chrome/([\\d.]+)").matcher(mobileUa);
+            java.util.regex.Matcher m = java.util.regex.Pattern.compile("Chrome/([\\d.]+)").matcher(webViewUa);
             if (m.find()) chrome = m.group(1);
-            s.setUserAgentString("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/" + chrome + " Safari/537.36");
-        } else {
-            // v2.10: X (x.com) serves a blank page to WebViews ("; wv" / "Version/4.0" in the UA): present the
-            // TV's own Chrome-Android UA without the WebView markers.
-            s.setUserAgentString(mobileUa.replace("; wv)", ")").replaceAll("Version/\\d+(\\.\\d+)* ", ""));
+            return "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/" + chrome + " Safari/537.36";
         }
+        // v2.10: X (x.com) serves a blank page to WebViews ("; wv" / "Version/4.0" in the UA): present the
+        // TV's own Chrome-Android UA without the WebView markers.
+        return webViewUa.replace("; wv)", ")").replaceAll("Version/\\d+(\\.\\d+)* ", "");
     }
 
     private void checkWebViewVersion() {

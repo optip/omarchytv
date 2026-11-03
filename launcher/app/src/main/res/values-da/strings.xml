@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ flyt · OK gem · Tilbage annuller</string>
     <string name="v210_arrange_reset">Nulstil placeringer</string>
     <string name="ss_speed">Effekthastighed</string>
+    <string name="ss_web">Webside</string>
+    <string name="ss_shift">Pixelforskydning</string>
     <string name="speed_slow">langsom</string>
     <string name="speed_normal">normal</string>
     <string name="speed_fast">hurtig</string>

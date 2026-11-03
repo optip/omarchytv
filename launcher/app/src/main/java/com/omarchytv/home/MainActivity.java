@@ -3379,7 +3379,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener, T
         });
         p.add(lLogo, logoLabel(cfg.screensaverArt), r -> {
             String n = next(logos, cfg.screensaverArt);
-            applyLive("screensaver", lLogo, j -> screensaver(j).put("art", n).put("mode", "pulse".equals(n) ? "pulse" : n.startsWith("aquarium") ? "aquarium" : "logo")
+            // v2.14: mode "web" stays; the art is then the fallback of the web page.
+            String m = "web".equals(cfg.screensaverMode) ? "web" : "pulse".equals(n) ? "pulse" : n.startsWith("aquarium") ? "aquarium" : "logo";
+            applyLive("screensaver", lLogo, j -> screensaver(j).put("art", n).put("mode", m)
                     .put("pcText", false));   // #84: a logo chosen here wins over a screensaver.txt pushed by the PC
             return true;
         });
@@ -3422,6 +3424,38 @@ public class MainActivity extends Activity implements AppAdapter.TileListener, T
             p.add(lFromPc, str(cfg.screensaverFromPc ? R.string.on : R.string.off), r -> {
                 boolean n = !cfg.screensaverFromPc;
                 applyLive("screensaver", lFromPc, j -> screensaver(j).put("pcText", n));
+                return true;
+            });
+        }
+        // v2.14: "Web page": off -> each web app (by name) -> off. Off sets the mode that the art gives.
+        java.util.List<LauncherConfig.WebApp> apps = cfg.webapps;
+        boolean webMode = "web".equals(cfg.screensaverMode);
+        int cur = -1;
+        String wantId = cfg.screensaverWebapp.isEmpty() ? null : LauncherConfig.slug(cfg.screensaverWebapp);
+        for (int i = 0; webMode && wantId != null && i < apps.size() && cur < 0; i++) {
+            if (apps.get(i).id.equals(wantId)) cur = i;
+        }
+        String webVal = cur >= 0 ? apps.get(cur).name
+                : webMode && !cfg.screensaverUrl.isEmpty() ? String.valueOf(android.net.Uri.parse(cfg.screensaverUrl).getHost()) : str(R.string.off);
+        String lWeb = str(R.string.ss_web), lShift = str(R.string.ss_shift);
+        final int nextApp = cur + 1;
+        p.add(lWeb, webVal, r -> {
+            if (nextApp < apps.size()) {
+                String id = apps.get(nextApp).id;
+                applyLive("screensaver", lWeb, j -> screensaver(j).put("mode", "web").put("webapp", id));
+            } else {
+                String m = cfg.screensaverArt.startsWith("aquarium") ? "aquarium" : "logo";
+                applyLive("screensaver", lWeb, j -> {
+                    org.json.JSONObject s = screensaver(j).put("mode", m);
+                    s.remove("webapp");
+                });
+            }
+            return true;
+        });
+        if (webMode) {
+            p.add(lShift, str(cfg.screensaverShift ? R.string.on : R.string.off), r -> {
+                boolean n = !cfg.screensaverShift;
+                applyLive("screensaver", lShift, j -> screensaver(j).put("shift", n));
                 return true;
             });
         }

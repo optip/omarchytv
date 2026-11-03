@@ -32,6 +32,8 @@ import java.util.Locale;
  * when the page reports no engine, has not drawn within 3 s, or the TV has no usable WebView. If the renderer process
  * dies (onRenderProcessGone) the screensaver closes and the Home screen comes back, through {@link #onDead}.
  * Console messages and JS errors go to logcat with tag "OmarchyTV".
+ * v2.14: mode "web" shows a web page instead ({@link WebSaver}). The native saver shows until the page is loaded.
+ * It stays when the page fails or does not load in time.
  */
 final class TteSaver {
 
@@ -50,13 +52,37 @@ final class TteSaver {
     /** Test hook (screensaver window intent extras, not exported): one fixed effect, or "bundle"/"native" level. */
     String forceEffect = "", forceMode = "";
     long drawTimeoutMs = DRAW_TIMEOUT_MS;
+    /** v2.14: the page of mode "web", or null (the tte page). */
+    private final LauncherConfig.WebApp page;
+    private final boolean shift;
+    private int shiftStep;
 
     TteSaver(Context c) {
         ctx = c;
         root = new FrameLayout(c);
         root.setBackgroundColor(Color.BLACK);
+        LauncherConfig cfg = LauncherConfig.get(c);
+        page = WebSaver.target(cfg);
+        shift = cfg.screensaverShift;
+        if (page == null && "web".equals(cfg.screensaverMode)) {
+            Log.w(TAG, "salvaschermo: modalita web senza URL valido, salvaschermo normale");
+        }
         try {
-            web = makeWeb(c);
+            web = page != null ? WebSaver.make(c, page, new WebSaver.Listener() {
+                @Override
+                public void loaded() {
+                    if (stopped || web == null || fallback != null || drawn) return;
+                    drawn = true;
+                    Log.i(TAG, "salvaschermo: pagina web caricata (" + WebSaver.origin(page.url) + ")");
+                    revealWeb();
+                    if (shift) shiftTick.run();
+                }
+
+                @Override
+                public void failed(String why) {
+                    toNative("pagina web: " + why);
+                }
+            }) : makeWeb(c);
             root.addView(web, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         } catch (Throwable e) {   // no WebView provider / disabled WebView package
             Log.w(TAG, "salvaschermo: WebView non disponibile (" + e + "), modalita nativo");
@@ -257,8 +283,10 @@ final class TteSaver {
         }
         drawn = false;
         LauncherConfig cfg = LauncherConfig.get(ctx);
-        boolean pulse = !cfg.living && "pulse".equals(cfg.screensaverArt) && !"native".equals(forceMode);   // v2.15
-        if (!pulse && !cfg.living && ("native".equals(forceMode) || AsciiSaverView.isAquarium(cfg))) {   // v2.14 Live needs the page
+        boolean pulse = page == null && !cfg.living && "pulse".equals(cfg.screensaverArt) && !"native".equals(forceMode);   // v2.15
+        // v2.14: mode "web" goes native only when forced; otherwise Live needs the page
+        if (page != null ? "native".equals(forceMode)
+                : !pulse && !cfg.living && ("native".equals(forceMode) || AsciiSaverView.isAquarium(cfg))) {
             toNative("aquarium/nativo");
             return;
         }
@@ -270,6 +298,14 @@ final class TteSaver {
             placeholder.start();
         }
         web.setAlpha(0f);
+        if (page != null) {   // v2.14: mode "web": the same placeholder and the same timeout as the tte page
+            Log.i(TAG, "salvaschermo: modalita web, " + WebSaver.origin(page.url));
+            web.loadUrl(page.url);
+            h.postDelayed(() -> {
+                if (!drawn) toNative("pagina web non caricata entro " + drawTimeoutMs + " ms");
+            }, drawTimeoutMs);
+            return;
+        }
         web.loadUrl("https://" + HOST + (pulse ? "/assets/pulse/index.html" : "/assets/saver/index.html"));
         h.postDelayed(() -> {
             if (!drawn) toNative("nessun disegno entro " + drawTimeoutMs + " ms");
@@ -305,6 +341,18 @@ final class TteSaver {
     }
 
     private AsciiSaverView placeholder;
+
+    /** v2.14: mode "web" pixel shift against burn-in. One step of the orbit every 60 s. stop() removes it. */
+    private final Runnable shiftTick = new Runnable() {
+        @Override
+        public void run() {
+            if (stopped || web == null || fallback != null) return;
+            float[] o = WebSaver.shiftOffset(shiftStep++, ctx.getResources().getDisplayMetrics().density);
+            web.setTranslationX(o[0]);
+            web.setTranslationY(o[1]);
+            h.postDelayed(this, WebSaver.SHIFT_MS);
+        }
+    };
 
     private AsciiSaverView newNative() {
         AsciiSaverView v = new AsciiSaverView(ctx, null);
@@ -386,7 +434,7 @@ final class TteSaver {
 
     void stop() {
         stopped = true;
-        h.removeCallbacksAndMessages(null);
+        h.removeCallbacksAndMessages(null);   // also the draw timeout and the pixel-shift timer
         if (web != null) {
             web.loadUrl("about:blank");
             web.destroy();

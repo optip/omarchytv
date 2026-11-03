@@ -481,8 +481,12 @@ final class LauncherConfig {
     final int ambilightBrightness;
     /** v2.13: Philips JointSpace host ("127.0.0.1" = this TV, or a LAN IP). */
     final String ambilightTvIp;
-    /** v2.13: Screensaver mode ("logo" default or "aquarium"). */
+    /** v2.13: Screensaver mode ("logo" default or "aquarium"); v2.14: or "web" (a web page, see {@link WebSaver}). */
     final String screensaverMode;
+    /** v2.14: mode "web": the id of a "webapps" entry, or a direct URL. The webapp wins when it exists ({@link WebSaver}). */
+    final String screensaverWebapp, screensaverUrl;
+    /** v2.14: mode "web": move the page a few pixels every 60 s against burn-in (default true). */
+    final boolean screensaverShift;
     /** v2.10: which of the current theme's official backgrounds (assets/wallpapers/<theme>/), like Omarchy next-background. */
     final int wallpaperBg;
     /** v2.15 (#71): "randomScope": "intros" (the animated intros, default) or "all" (every bundled theme). */
@@ -810,8 +814,9 @@ final class LauncherConfig {
         screensaverArt = ss != null ? ss.optString("art", defaultSsArt).trim() : "pulse";
         boolean aqArt = "aquarium".equals(screensaverArt) || "aquarium-classic".equals(screensaverArt);
         String ssMode = ss != null ? ss.optString("mode", aqArt ? "aquarium" : "logo").trim() : "pulse";
-        if (aqArt) ssMode = "aquarium";
-        if ("pulse".equals(screensaverArt)) ssMode = "pulse";
+        boolean webMode = "web".equals(ssMode);   // v2.14: mode "web" stays; the art is its fallback
+        if (aqArt && !webMode) ssMode = "aquarium";
+        if ("pulse".equals(screensaverArt) && !webMode) ssMode = "pulse";
         String ps = ss != null ? ss.optString("pulseScene", "sphere") : "sphere";
         pulseNotice = j != null && j.optBoolean("pulseNotice", false);
         agentAlert = j != null && j.optBoolean("agentAlert", false);
@@ -830,6 +835,9 @@ final class LauncherConfig {
         pulseQuakes = pulsePanelMap.containsKey("earthquakes") ? pulsePanelMap.get("earthquakes") : (ss == null || ss.optBoolean("earthquakes", true));
         pulseOpensky = ss != null && ss.optBoolean("opensky", false);
         screensaverMode = ssMode;
+        screensaverWebapp = ss != null ? ss.optString("webapp", "").trim() : "";
+        screensaverUrl = ss != null ? ss.optString("url", "").trim() : "";
+        screensaverShift = ss == null || ss.optBoolean("shift", true);
         boolean defSsClock = c != null && c.getResources().getBoolean(R.bool.screensaver_clock);
         screensaverClock = ss != null ? ss.optBoolean("clock", defSsClock) : defSsClock;
         screensaverFromPc = ss == null || ss.optBoolean("pcText", true);
@@ -931,6 +939,9 @@ final class LauncherConfig {
         if (j == null || j.optBoolean("pulseDefault215", false)) return false;
         JSONObject ss = j.optJSONObject("screensaver");
         if (ss == null) j.put("screensaver", ss = new JSONObject());
+        if ("web".equals(ss.optString("mode", ""))) {   // v2.14: a web page screensaver stays; Pulse is not forced on it
+            return false;
+        }
         JSONObject lv = j.optJSONObject("living");
         boolean wasPulse = "pulse".equals(ss.optString("art", "")) && (lv == null || !lv.optBoolean("enabled", false));
         if (!wasPulse) {

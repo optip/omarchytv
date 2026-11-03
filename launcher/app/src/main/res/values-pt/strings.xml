@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ mover · OK guardar · Voltar cancelar</string>
     <string name="v210_arrange_reset">Repor posições</string>
     <string name="ss_speed">Velocidade do efeito</string>
+    <string name="ss_web">Página web</string>
+    <string name="ss_shift">Deslocação de píxeis</string>
     <string name="speed_slow">lenta</string>
     <string name="speed_normal">normal</string>
     <string name="speed_fast">rápida</string>
