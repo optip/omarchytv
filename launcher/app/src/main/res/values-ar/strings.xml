@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ نقل · OK حفظ · رجوع إلغاء</string>
     <string name="v210_arrange_reset">إعادة ضبط المواضع</string>
     <string name="ss_speed">سرعة التأثير</string>
+    <string name="ss_web">صفحة ويب</string>
+    <string name="ss_shift">إزاحة البكسل</string>
     <string name="speed_slow">بطيئة</string>
     <string name="speed_normal">عادية</string>
     <string name="speed_fast">سريعة</string>

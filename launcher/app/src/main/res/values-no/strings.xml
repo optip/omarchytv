@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ flytt · OK lagre · Tilbake avbryt</string>
     <string name="v210_arrange_reset">Tilbakestill plasseringer</string>
     <string name="ss_speed">Effekthastighet</string>
+    <string name="ss_web">Nettside</string>
+    <string name="ss_shift">Pikselforskyvning</string>
     <string name="speed_slow">sakte</string>
     <string name="speed_normal">normal</string>
     <string name="speed_fast">rask</string>

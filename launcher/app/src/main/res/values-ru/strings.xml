@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ переместить · OK сохранить · Назад отмена</string>
     <string name="v210_arrange_reset">Сбросить положения</string>
     <string name="ss_speed">Скорость эффекта</string>
+    <string name="ss_web">Веб-страница</string>
+    <string name="ss_shift">Сдвиг пикселей</string>
     <string name="speed_slow">медленно</string>
     <string name="speed_normal">обычно</string>
     <string name="speed_fast">быстро</string>

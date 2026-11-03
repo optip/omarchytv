@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ přesun · OK uložit · Zpět zrušit</string>
     <string name="v210_arrange_reset">Obnovit pozice</string>
     <string name="ss_speed">Rychlost efektu</string>
+    <string name="ss_web">Webová stránka</string>
+    <string name="ss_shift">Posun pixelů</string>
     <string name="speed_slow">pomalu</string>
     <string name="speed_normal">normálně</string>
     <string name="speed_fast">rychle</string>

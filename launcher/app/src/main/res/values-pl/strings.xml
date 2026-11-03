@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ przenieś · OK zapisz · Wstecz anuluj</string>
     <string name="v210_arrange_reset">Przywróć pozycje</string>
     <string name="ss_speed">Szybkość efektu</string>
+    <string name="ss_web">Strona internetowa</string>
+    <string name="ss_shift">Przesuwanie pikseli</string>
     <string name="speed_slow">wolno</string>
     <string name="speed_normal">normalnie</string>
     <string name="speed_fast">szybko</string>

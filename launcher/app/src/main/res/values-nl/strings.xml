@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ verplaatsen · OK opslaan · Terug annuleren</string>
     <string name="v210_arrange_reset">Posities herstellen</string>
     <string name="ss_speed">Effectsnelheid</string>
+    <string name="ss_web">Webpagina</string>
+    <string name="ss_shift">Pixelverschuiving</string>
     <string name="speed_slow">langzaam</string>
     <string name="speed_normal">normaal</string>
     <string name="speed_fast">snel</string>

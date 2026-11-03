@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ mozgatás · OK mentés · Vissza mégse</string>
     <string name="v210_arrange_reset">Pozíciók visszaállítása</string>
     <string name="ss_speed">Effekt sebessége</string>
+    <string name="ss_web">Weboldal</string>
+    <string name="ss_shift">Képponteltolás</string>
     <string name="speed_slow">lassú</string>
     <string name="speed_normal">normál</string>
     <string name="speed_fast">gyors</string>

@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ 移动 · OK 保存 · 返回 取消</string>
     <string name="v210_arrange_reset">重置位置</string>
     <string name="ss_speed">效果速度</string>
+    <string name="ss_web">网页</string>
+    <string name="ss_shift">像素偏移</string>
     <string name="speed_slow">慢</string>
     <string name="speed_normal">正常</string>
     <string name="speed_fast">快</string>

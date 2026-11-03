@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ taşı · OK kaydet · Geri iptal</string>
     <string name="v210_arrange_reset">Konumları sıfırla</string>
     <string name="ss_speed">Efekt hızı</string>
+    <string name="ss_web">Web sayfası</string>
+    <string name="ss_shift">Piksel kaydırma</string>
     <string name="speed_slow">yavaş</string>
     <string name="speed_normal">normal</string>
     <string name="speed_fast">hızlı</string>

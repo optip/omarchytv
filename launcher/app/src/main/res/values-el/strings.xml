@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ μετακίνηση · OK αποθήκευση · Πίσω ακύρωση</string>
     <string name="v210_arrange_reset">Επαναφορά θέσεων</string>
     <string name="ss_speed">Ταχύτητα εφέ</string>
+    <string name="ss_web">Ιστοσελίδα</string>
+    <string name="ss_shift">Μετατόπιση εικονοστοιχείων</string>
     <string name="speed_slow">αργή</string>
     <string name="speed_normal">κανονική</string>
     <string name="speed_fast">γρήγορη</string>

@@ -331,6 +331,8 @@
     <string name="v210_arrange_hint">◀▶▲▼ flytta · OK spara · Bakåt avbryt</string>
     <string name="v210_arrange_reset">Återställ positioner</string>
     <string name="ss_speed">Effekthastighet</string>
+    <string name="ss_web">Webbsida</string>
+    <string name="ss_shift">Pixelförskjutning</string>
     <string name="speed_slow">långsam</string>
     <string name="speed_normal">normal</string>
     <string name="speed_fast">snabb</string>
