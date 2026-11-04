@@ -528,8 +528,8 @@ public final class LinkServer {
     static final java.util.regex.Pattern THEME_PATH = java.util.regex.Pattern.compile("^/v1/themes/([a-z0-9][a-z0-9-]{0,39})$");
     static final java.util.regex.Pattern THEME_SELECT = java.util.regex.Pattern.compile("^/v1/themes/([a-z0-9][a-z0-9-]{0,39})/select$");
 
-    /** v-next: custom app banners, PUT/DELETE /v1/banners/<package> (PNG), GET /v1/banners. */
-    static final java.util.regex.Pattern BANNER_PATH = java.util.regex.Pattern.compile("^/v1/banners/([A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z0-9_]+)+)$");
+    /** v-next: custom app banners, PUT/DELETE /v1/banners/<package> or /v1/banners/web-<id> (web app) (PNG), GET /v1/banners. */
+    static final java.util.regex.Pattern BANNER_PATH = java.util.regex.Pattern.compile("^/v1/banners/([A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z0-9_]+)+|web-[A-Za-z0-9][A-Za-z0-9_-]{0,63})$");
     static final int BANNER_MAX = 1024 * 1024, BANNER_FILES = 200;
 
     private static boolean bannerPut(Request req) {

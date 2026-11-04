@@ -141,7 +141,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 }
             }
             if (icon == null) icon = ctx.getDrawable(R.drawable.ic_web);
-            Drawable banner = "grok-bot".equals(w.id) ? grokBotBanner(ctx) : null;
+            Drawable banner = "grok-bot".equals(w.id) ? grokBotBanner(ctx) : bannerOverride("web-" + w.id);   // banners/web-<id>.png, else the name tile
             Entry en = new Entry(w.name, new ComponentName(ctx.getPackageName(),
                     ("grok-bot".equals(w.id) ? AskActivity.class.getName() : WebAppActivity.class.getName()) + "#" + w.id), key, banner, icon);
             en.system = true;   // no uninstall / app info; "Remove web app" instead
@@ -400,7 +400,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
     }
 
     /**
-     * Optional per-app banner: banners/<package>.png in the app's external files dir (pushed by adb or the PC).
+     * Optional per-app banner: banners/<package>.png (or banners/web-<id>.png for a web app) in the app's external files dir (pushed by adb or the PC).
      * Absent (the default) or unreadable → null, and the app's own banner is used.
      */
     private Drawable bannerOverride(String pkg) {
