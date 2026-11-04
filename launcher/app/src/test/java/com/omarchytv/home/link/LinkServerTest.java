@@ -230,6 +230,12 @@ public class LinkServerTest {
         assertFalse(f.exists());
         assertEquals(404, signed("DELETE", "/v1/banners/com.netflix.ninja", "").status);
         assertTrue(host.events.stream().anyMatch(e -> e.startsWith("banners ")));
+        // web app banners: banners/web-<id>.png
+        assertEquals(200, signedBytes("PUT", "/v1/banners/web-energy", png, "image/png").status);
+        assertTrue(new java.io.File(host.wallpaperDir().getParentFile(), "banners/web-energy.png").isFile());
+        assertEquals(404, signed("PUT", "/v1/banners/web-", "").status);
+        assertEquals(404, signed("PUT", "/v1/banners/web-..evil", "").status);
+        assertEquals(200, signed("DELETE", "/v1/banners/web-energy", "").status);
     }
 
     @Test
