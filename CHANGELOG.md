@@ -14,6 +14,7 @@ LG and Samsung only. Android TV is unchanged in this build: Android users stay o
 
 ### Earlier unreleased notes
 
+- **Web app banners.** A web app tile shows `banners/web-<id>.png` from the app's files dir when that file is there (push it with adb or `PUT /v1/banners/web-<id>`). If the file is not there, the tile shows the name as before.
 - **Top bar focus loops.** ◀ on the menu logo goes to the last icon, and ▶ on the last icon goes to the menu logo (the floating companion, when shown, is still the stop after the last icon). Hidden items are skipped as before.
 - **Home widgets keep one column.** With only one top-row widget on, it no longer stretches across the whole row.
 - **webOS 4.0: dock and grids lay out in a row (#72).** compat.js now also rewrites the stylesheet when CSS grid is missing (Chrome 53), not only when CSS variables are; the stage is re-fitted after load for engines that report the window size late.
